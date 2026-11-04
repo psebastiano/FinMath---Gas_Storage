@@ -1,0 +1,36 @@
+# Source PDFs (paper, course slides) stay local
+*.pdf
+!report/*.pdf
+!slides/*.pdf
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.ipynb_checkpoints/
+
+# Experiments
+data/
+runs/
+checkpoints/
+*.pt
+*.pth
+
+# LaTeX build files
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.bbl
+*.blg
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
