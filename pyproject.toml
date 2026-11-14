@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gas_storage"
+version = "0.1.0"
+description = "Reimplementation of Curin et al. (2021), A deep learning model for gas storage optimization"
+requires-python = ">=3.12"
+
+[tool.setuptools.packages.find]
+where = ["src"]
