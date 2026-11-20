@@ -9,10 +9,14 @@ from .policy import PolicyNetworks
 from .storage import StorageSpec
 
 
-def build_features(k: int, level: Tensor, market: MarketData, fwd_pos: Tensor,
+def build_features(k: int, level: Tensor, market: MarketData, price_scale: float,
                    spec: StorageSpec, cfg: ModelConfig) -> Tensor:
     """(B, n_inputs) normalized inputs, day-k information only (no peeking)."""
-    raise NotImplementedError
+
+    # Noramlization
+    
+
+    
 
 
 @dataclass

@@ -7,7 +7,7 @@ from typing import Self
 class ModelConfig:
     trade_forwards: bool = False                 # False = SMod, True = SFMod
     alpha: float = 0.0                           # forward volume cap (eq. 16)
-    fwd_cap: str = "cumulative"                  # "per_trade" (paper literal) | "cumulative"
+    fwd_cap: str = "per_trade"                   # "per_trade" (paper literal) | "cumulative"
     features: tuple[str, ...] = ("k", "H", "S")  # SFMod: ("k", "H", "S", "F", "D")
     net_sharing: str = "month"                   # "day" (N=K) | "month" (N=12) | "shared" (N=1)
     hidden: int = 16
@@ -17,12 +17,12 @@ class ModelConfig:
 
     @classmethod
     def smod(cls) -> Self:
-        raise NotImplementedError
+        return cls(trade_forwards = False, features = ("k", "H", "S"), risk_aversion = 3.0 )
 
     @classmethod
     def sfmod(cls, alpha: float) -> Self:
-        raise NotImplementedError
-
+        return cls(trade_forwards = True, alpha = alpha, 
+                   features = ("k", "H", "S", "F"), risk_aversion = 10.0)
 
 @dataclass
 class TrainConfig:

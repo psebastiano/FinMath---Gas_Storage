@@ -145,7 +145,7 @@ W = [ Σ_k −h^S_k·S_k  +  Σ_k −h^F_k·F_k·(days in next month)  −  κ·
 class ModelConfig:
     trade_forwards: bool = False         # False = SMod, True = SFMod
     alpha: float = 0.0                   # forward volume cap (eq. 16)
-    fwd_cap: str = "cumulative"          # "per_trade" (paper literal) | "cumulative" (see open questions)
+    fwd_cap: str = "per_trade"           # "per_trade" (paper literal) | "cumulative" (see open questions)
     features: tuple[str, ...] = ("k", "H", "S")   # SFMod: ("k", "H", "S", "F", "D")
     net_sharing: str = "month"           # "day" (N=K) | "month" (N=12) | "shared" (N=1)
     hidden: int = 16
