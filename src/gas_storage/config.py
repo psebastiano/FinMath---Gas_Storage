@@ -32,3 +32,25 @@ class TrainConfig:
     fresh_paths: bool = False                    # True: new simulated paths every batch
     seed: int = 0
     device: str = "cpu"
+
+
+@dataclass
+class DataConfig:
+    """Size and train/test split of the simulated data. Reproducibility notes: market.make_data."""
+    n_paths: int = 1000                          # M: number of simulated paths (rows of spot/fwd)
+    train_frac: float = 0.9                      # 0.9 -> 900/100 as in the paper; scales with n_paths
+    seed: int = 0                                # seed for the simulation and the train/test split
+
+    def __post_init__(self) -> None:
+        if not 0.0 < self.train_frac < 1.0:
+            raise ValueError(f"train_frac must be in (0, 1), got {self.train_frac}")
+        if self.n_train < 1 or self.n_test < 1:
+            raise ValueError(f"n_paths={self.n_paths} too small for train_frac={self.train_frac}")
+
+    @property
+    def n_train(self) -> int:
+        return round(self.n_paths * self.train_frac)
+
+    @property
+    def n_test(self) -> int:
+        return self.n_paths - self.n_train
