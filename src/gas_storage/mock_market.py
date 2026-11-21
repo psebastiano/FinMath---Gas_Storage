@@ -3,7 +3,7 @@ import torch
 
 from .market import MarketData
 
-MONTH_START = [0, 30, 61, 91, 122, 153, 183, 214, 244, 275, 306, 334, 351]
+MONTH_START = torch.tensor([0, 30, 61, 91, 122, 153, 183, 214, 244, 275, 306, 334, 351])
 
 def mock_market_data(n_paths: int, seed: int=0) -> MarketData:
     K = int(MONTH_START[-1])
