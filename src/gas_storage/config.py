@@ -8,7 +8,7 @@ class ModelConfig:
     trade_forwards: bool = False                 # False = SMod, True = SFMod
     alpha: float = 0.0                           # forward volume cap (eq. 16)
     fwd_cap: str = "per_trade"                   # "per_trade" (paper literal) | "cumulative"
-    features: tuple[str, ...] = ("k", "H", "S")  # SFMod: ("k", "H", "S", "F", "D")
+    features: tuple[str, ...] = ("k", "H", "S")  # SFMod: ("k", "H", "S", "F")
     net_sharing: str = "month"                   # "day" (N=K) | "month" (N=12) | "shared" (N=1)
     hidden: int = 16
     n_hidden_layers: int = 1                     # L = 2 in the paper's notation

@@ -25,3 +25,5 @@ def plot_pnl_hist(pnls: dict[str, Tensor], ax=None):
 
 def plot_pnl_box(pnls: dict[str, Tensor], ax=None):
     raise NotImplementedError
+
+#Need to add the thing about each experiment plots into its own folder with the config that made it
