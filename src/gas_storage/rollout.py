@@ -59,32 +59,67 @@ def rollout(policy: PolicyNetworks, market: MarketData, spec: StorageSpec,
     """Simulate the strategy day by day on all B paths in paralle"""
     B, K = market.spot.shape
 
+    # -- Calendar
+    month_start = market.month_start
+    J = len(month_start) - 1
+    month_of_day = torch.zeros(K, dtype=torch.long)
+    for j in range(J):
+        month_of_day[int(month_start[j]):int(month_start[j+1])] = j
+    days_in_month = month_start[1:] - month_start[:-1]
+
+    # -- State
     H = torch.zeros(B)
+    d_now = torch.zeros(B) # Daily deliver this month
+    d_next = torch.zeros(B) # Daily deliver next month
+        
     levels = [H]
-    flows = []
+    flows, h_spots, h_fwds = [], [], []
+    fwd_cash = []
 
     for k in range(K):
+        j = int(month_of_day[k])
+
+        # New month : last month trades become this month delivery
+        if k == int(month_start[j]) and k > 0:
+            d_now = d_next
+            d_next = torch.zeros(B)
+
         x = build_features(k, H, market, price_scale, spec, cfg)
+        out = policy(k, x)
 
-        a = policy(k, x)[:, 0]
-
+        # Physical Flow
         lo, hi = flow_bounds(spec, k, H)
-
-        q = lo + a * (hi - lo)
-
+        q = lo + out[:, 0] * (hi - lo)
         H = H + q
+
+        h_s = q - d_now
+
+        if cfg.trade_forwards and j <= J - 3:
+            n_next = float(days_in_month[j + 1])
+            cap = cfg.alpha * spec.capacity / n_next #eq. 16
+            h_f = cap * (2.0 * out[:,1] - 1.0) #(0,1) -> [-cap, cap]
+            d_next = d_next + h_f
+            fwd_cash.append(-h_f * market.fwd[:, k] * n_next)
+        else:
+            h_f = torch.zeros(B)
 
         flows.append(q)
         levels.append(H)
+        h_spots.append(h_s)
+        h_fwds.append(h_f)
 
-    flow = torch.stack(flows, dim=1)
-    level = torch.stack(levels,dim=1)
-
-    h_spot = flow
-    h_fwd = torch.zeros_like(flow)
+    flow = torch.stack(flows, dim=1) #(B,K)
+    level = torch.stack(levels,dim=1) #(B,K+1) Because it includes the starting level which is zero before any trading
+    h_spot = torch.stack(h_spots, dim=1) #(B,K)
+    h_fwd = torch.stack(h_fwds, dim=1) #(B,K)
 
     pnl_spot = -(h_spot * market.spot).sum(dim=1) / cfg.pnl_scale
-    pnl_fwd = torch.zeros(B)
+    
+    if fwd_cash:
+        pnl_fwd = torch.stack(fwd_cash, dim=1).sum(dim=1) / cfg.pnl_scale
+    else:
+        pnl_fwd = torch.zeros(B)
+    
     pnl = pnl_spot + pnl_fwd
 
     return RolloutResult(flow=flow, h_spot=h_spot, h_fwd=h_fwd, level=level,

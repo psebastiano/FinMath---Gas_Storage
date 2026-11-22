@@ -3,11 +3,11 @@ import torch
 
 from gas_storage.config import DataConfig, ModelConfig, TrainConfig
 from gas_storage.market import SeasonalOUSimulator, make_data
-from gas.storage.policy import PolicyNetworks, make_day_to_net
-from gas.storage.rollout import rollout
-from gas.storage.storage import StorageSpec
-from gas.storage.experiments import EXPERIMENTS
-from gas.storage.train import train
+from gas_storage.policy import PolicyNetworks, make_day_to_net
+from gas_storage.rollout import rollout
+from gas_storage.storage import StorageSpec
+from gas_storage.experiments import EXPERIMENTS
+from gas_storage.train import train
 
 def run_model(name, model_cfg, train_cfg, train_data, test_data, spec, simulator):
     """Build the networks, train them, evaluate on the test paths"""
@@ -39,8 +39,8 @@ def main() -> None:
     spec = StorageSpec.paper(K=train_data.n_days)
     train_cfg = TrainConfig()
 
-    for name in EXPERIMENTS.items():
-        run_model(name, ModelConfig.smod(), train_cfg, train_data, test_data, spec, simulator)
+    for name, cfg in EXPERIMENTS.items():
+        run_model(name, cfg, train_cfg, train_data, test_data, spec, simulator)
 
 if __name__ == "__main__":
     main()
