@@ -76,10 +76,10 @@ class DummySimulator:                 # day 1: right shapes, simple seasonal cur
 class SeasonalOUConfig:
     K: int = 351
     n_months: int = 12
-    mean_level: float = 20.0          # €/MWh, average seasonal level
-    seasonal_amp: float = 5.0         # winter–summer amplitude
-    mean_reversion: float = 0.05      # per day
-    vol: float = 0.03                 # daily volatility of log-price
+    mean_level: float = 18.0          # €/MWh, average seasonal level (TTF 2017-19)
+    seasonal_amp: float = 2.0         # winter–summer amplitude
+    mean_reversion: float = 0.0035    # per day
+    vol: float = 0.0275              # daily volatility of log-price
     fwd_premium: float = 0.0          # drift in forwards (0 = martingale, no free forward profit)
 
 class SeasonalOUSimulator:            # log S = seasonal mean + Ornstein–Uhlenbeck deviation

@@ -168,12 +168,19 @@ class DummySimulator:
 # ---------------------------------------------------------------------------
 @dataclass
 class SeasonalOUConfig:
+    """Defaults kalibriert auf TTF Front-Month (ICE, taeglich) 10/2017-12/2019 (vor COVID/Krise):
+    log F = c + b cos(2 pi (t - peak)/365) + X per Kleinste Quadrate, dann fit_ou auf X.
+    Schaetzung pro Handelstag: Niveau 17.7, Amplitude ~2.0 EUR, theta 0.0050, vol 0.0331;
+    umgerechnet auf Kalendertage (Modelltag, Saison /365): theta * 252/365, vol * sqrt(252/365).
+    Front-Month statt Day-Ahead -> theta eher Untergrenze (Spot kehrt schneller zurueck).
+    Alte, nicht kalibrierte Werte: mean_level=20, seasonal_amp=5, mean_reversion=0.05, vol=0.03.
+    """
     K: int = 351
     n_months: int = 12
-    mean_level: float = 20.0       # EUR/MWh, mittleres Niveau
-    seasonal_amp: float = 5.0      # Winter-Sommer-Amplitude
-    mean_reversion: float = 0.05   # theta, pro Tag
-    vol: float = 0.03              # taegliche Vola des Log-Preises
+    mean_level: float = 18.0       # EUR/MWh, mittleres Niveau
+    seasonal_amp: float = 2.0      # Winter-Sommer-Amplitude (halbe Differenz)
+    mean_reversion: float = 0.0035 # theta, pro Tag (Halbwertszeit ~200 Tage)
+    vol: float = 0.0275            # taegliche Vola des Log-Preises (~53 % p.a.)
     fwd_premium: float = 0.0       # Risikopraemie p.a. im Forward (0 = Martingal, keine Drift)
     peak_day: int = PEAK_DAY
 
